@@ -10,14 +10,22 @@ class App extends React.Component {
   constructor(props){
     super(props)       
     this.state = {
+      usedSearch: false,
       results: []
     }
   }
 
   _handleResults = (results) => {
     this.setState({
-      results: results
+      results: results,
+      usedSearch: true
     })
+  }
+
+  _renderResults () {
+    return this.state.results.length === 0 
+    ? <p>Sorry! Results not found!</p>
+    : <MoviesList movies={this.state.results}/>
   }
 
   render(){
@@ -27,9 +35,10 @@ class App extends React.Component {
         <div className="SearchForm-wrapper">
           <SearchForm onResults={this._handleResults}/>
         </div>
-        {this.state.results.length === 0
-          ? <p>Sin resultados</p>
-          : <MoviesList movies={this.state.results}/>}
+        {this.state.usedSearch
+          ? this._renderResults()
+          : <small>Use the form to search a movie</small>
+        }
       </div>
     );
   }
