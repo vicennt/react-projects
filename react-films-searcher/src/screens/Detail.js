@@ -2,6 +2,7 @@ import React from 'react'
 import PropTypes from 'prop-types'
 import { Link } from 'react-router-dom'
 import 'bulma/css/bulma.css'
+import { ButtonBackHome } from '../components/ButtonBackHome'
 
 
 const API_KEY = '4287ad07'
@@ -41,9 +42,7 @@ export class Detail extends React.Component {
     const {Title, Poster, Actors, Metascore, Plot} = this.state.movie
     return(
       <div>
-        <Link to="/">
-          <button className="button is-info is-rounded">Volver al buscador</button>
-        </Link>
+        <ButtonBackHome to="/" className="button is-info is-rounded">Volver al buscador</ButtonBackHome>
         <h1>{Title}</h1>
         <img src={Poster} alt={Poster}/>
         <h3>{Actors}</h3>
