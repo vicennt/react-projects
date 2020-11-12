@@ -2,11 +2,14 @@ import React from 'react';
 import Square from './Square';
 
 export default class Board extends React.Component {
+
   renderSquare(i) {
+    console.log("[LOG]: " + this.props.winLine )
     return (
       <Square
         value={this.props.squares[i]}
         onClick={() => this.props.onClick(i)}
+        highlight={this.props.winLine && this.props.winLine.includes(i)}
       />
     );
   }
