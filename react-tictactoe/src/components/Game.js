@@ -30,8 +30,15 @@ export default class Game extends React.Component {
         squares: Array(9).fill(null)
       }],
       stepNumber: 0,
-      xIsNext: true
+      xIsNext: true,
+      moveListOrder: "ASC"
     };
+  }
+
+  handleOrderMoveList(){
+    this.setState({
+      moveListOrder: this.state.moveListOrder === "ASC" ? "DESC" : "ASC"
+    });
   }
 
   handleClick(i) {
@@ -95,8 +102,11 @@ export default class Game extends React.Component {
           />
         </div>
         <div className="game-info">
+          <p>Current order: {this.state.moveListOrder}</p>
+          <span>Change order: </span>
+          <input type="checkbox" name="toggleSwitch" id="toggleSwitch" onClick={() => this.handleOrderMoveList()}/>
           <div>{status}</div>
-          <ol>{moves}</ol>
+          <ol>{this.state.moveListOrder === "ASC" ? moves : moves.reverse()}</ol>
         </div>
       </div>
     );
