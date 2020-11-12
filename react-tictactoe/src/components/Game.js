@@ -70,8 +70,11 @@ export default class Game extends React.Component {
         'Go to move #' + move + " -> (" + (1 + Math.trunc(step.squareClicked / 3)) + "," + (step.squareClicked % 3) + ")" :
         'Go to game start';
         return(
-          <li key={move}>
-            <button onClick={() => this.jumpTo(move)}>{desc}</button>
+          <li key={move} >
+            <button 
+              style={move === this.state.stepNumber ? { fontWeight : "bold"} : { fontWeight : "normal"}} 
+              onClick={() => this.jumpTo(move)}>{desc}
+            </button>
           </li>
         )
     })
