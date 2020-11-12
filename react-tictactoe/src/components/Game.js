@@ -115,6 +115,11 @@ export default class Game extends React.Component {
           <div>{status}</div>
           <ol>{this.state.moveListOrder === "ASC" ? moves : moves.reverse()}</ol>
         </div>
+        <div className="game-result">
+          {
+            this.state.stepNumber === 9 && calculateWinner(current.squares).winner === null ? <p>This is a draw! No one wins</p> : <p></p>
+          }
+        </div>
       </div>
     );
   }
