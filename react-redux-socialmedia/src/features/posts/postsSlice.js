@@ -47,6 +47,19 @@ const postsSlice = createSlice({
                 existingPost.content = content;
             }
         }
+    },
+    extraReducers : {
+        [fetchPosts.pending] : (state, action) => {
+            state.status = "loading";
+        },
+        [fetchPosts.fulfilled] : (state, action) => {
+            state.status = "succeeded";
+            state.posts = state.posts.concat(action.payload);
+        },
+        [fetchPosts.rejected] : (state, action) => {
+            state.status = "failed";
+            state.error = action.error.message;
+        }
     }
 })
 
