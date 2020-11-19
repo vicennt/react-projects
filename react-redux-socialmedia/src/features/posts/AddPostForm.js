@@ -1,11 +1,13 @@
 import React, { useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { addNewPost } from './postsSlice'
+import { unwrapResult} from '@reduxjs/toolkit';
 
 export const AddPostForm = () => {
     const [title, setTitle] = useState("");
     const [content, setContent] = useState("");
     const [userId, setUserId] = useState("");
+    const [addRequestStatus, setAddRequestStatus] = useState("idle");
 
     const dispatch = useDispatch();
     const users = useSelector(state => state.users);
@@ -13,15 +15,28 @@ export const AddPostForm = () => {
     const onTitleChanged = e => setTitle(e.target.value);
     const onContentChanged = e => setContent(e.target.value);
     const onAuthorChanged = e => setUserId(e.target.value);
-    const onSavePostClicked = () => {
-        if(title && content) {
-            dispatch(addNewPost({title, content, userId}));
-            setTitle('');
-            setContent('');
+
+    const canSave = [title, content, userId].every(Boolean) && addRequestStatus === 'idle';
+    const onSavePostClicked = async () => {
+        if(canSave){
+            try{
+                setAddRequestStatus("pending");
+                const resultAction = await dispatch(
+                    addNewPost({title, content, userId})
+                )
+                unwrapResult(resultAction);
+                setTitle('');
+                setContent('');
+                setUserId('');
+
+            } catch(err) {
+                console.error("Failed to save the post: ", err)
+                alert("Error!");
+            } finally {
+                setAddRequestStatus("idle");
+            }
         }
     }
-
-    const canSave = Boolean(title) && Boolean(content) && Boolean(userId);
 
     const usersOptions = users.map(user => (
         <option key={user.id} value={user.id}>
