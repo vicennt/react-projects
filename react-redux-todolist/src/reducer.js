@@ -5,7 +5,7 @@ import filtersReducer from './features/filters/filtersSlice';
 
 const rootReducer = combineReducers({
     todos: todosReducer, // array con los todos
-    filters: filtersReducer // objecto con status y colors
+    filter: filtersReducer // objecto con status y colors
 })
 
 export default rootReducer;
