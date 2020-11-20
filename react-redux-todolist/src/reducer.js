@@ -17,6 +17,7 @@ const nextTodoId = (todos) => {
 }
 
 // ES6 nos permite assignar un defalt value a los argumentos, assignamos initialState al state.
+// dentro de un reducer no esta permitido mutar el estado
 export default function appReducer(state = initialState, action) {
     // Aquí seleccionamos la acción que queremos ejecutar
     switch (action.type) {
@@ -31,6 +32,31 @@ export default function appReducer(state = initialState, action) {
                         completed: false
                     }
                 ]
+            }
+        }
+        case 'todos/todoToggled':{
+            return {
+                ...state,
+                // Tenemos que hacer una copia de todos los todos
+                todos: state.todos.map(todo =>{
+                    if(todo.id !== action.payload){
+                        return todo;
+                    }
+                    // Hemos encontrado el todo que tiene que cambiar
+                    return {
+                        ...todo,
+                        completed: !todo.completed
+                    }
+                })
+            }
+        }
+        case 'filters/statusFilterChanged': {
+            return {
+                ...state,
+                filters: {
+                    ...state.filters, // copiamos otros filtros
+                    status: action.payload
+                }
             }
         }
         default:
