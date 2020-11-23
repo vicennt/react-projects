@@ -1,12 +1,20 @@
-import { createStore, applyMiddleware } from 'redux'
-import thunkMiddleware from 'redux-thunk'
-import { composeWithDevTools } from 'redux-devtools-extension'
-import rootReducer from '../reducer'
+import { configureStore } from '@reduxjs/toolkit';
 
-const composedEnhancer = composeWithDevTools(
-  applyMiddleware(thunkMiddleware)
-  // other store enhancers if any
-)
+import todosReducer from '../features/todos/todosSlice';
+import filtersReducer from '../features/filters/filtersSlice';
 
-const store = createStore(rootReducer, composedEnhancer)
-export default store
+/*condigureStore nos permite:
+  - combinar los reducers
+  - añade automáticamente el thunk middleware
+  - añade automáticamente el setup para el redux devtools extensions 
+  - añade un middlware extra para controlar los bugs por inmutabilidad
+*/
+const store = configureStore({
+  reducer: {
+    todos: todosReducer,
+    filters: filtersReducer
+  }
+})
+
+
+export default store;
