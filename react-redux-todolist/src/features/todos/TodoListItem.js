@@ -1,32 +1,35 @@
 import React from 'react'
-import { useSelector, useDispatch } from 'react-redux';
+import { useSelector, useDispatch } from 'react-redux'
+
 import { ReactComponent as TimesSolid } from './times-solid.svg'
+
 import { availableColors, capitalize } from '../filters/colors'
+import {
+  todoColorSelected,
+  todoDeleted,
+  todoToggled,
+  selectTodoById,
+} from './todosSlice'
 
-const selectTodoById = (state, todoId) => {
-  return state.todos.find(todo => todo.id === todoId)
-}
-
-
+// Destructure `props.id`, since we just need the ID value
 const TodoListItem = ({ id }) => {
-  const todo = useSelector(state => selectTodoById(state, id));
-  const { text, completed, color } = todo;
-  const dispatch = useDispatch();
+  // Call our `selectTodoById` with the state _and_ the ID value
+  const todo = useSelector((state) => selectTodoById(state, id))
+  const { text, completed, color } = todo
+
+  const dispatch = useDispatch()
 
   const handleCompletedChanged = () => {
-    dispatch({ type: 'todos/todoToggled', payload: todo.id});
+    dispatch(todoToggled(todo.id))
   }
 
   const handleColorChanged = (e) => {
     const color = e.target.value
-    dispatch({
-      type: 'todos/colorSelected',
-      payload: { todoId: todo.id, color },
-    })
+    dispatch(todoColorSelected(todo.id, color))
   }
 
   const onDelete = () => {
-    dispatch({ type: 'todos/todoDeleted', payload: todo.id })
+    dispatch(todoDeleted(todo.id))
   }
 
   const colorOptions = availableColors.map((c) => (
@@ -66,4 +69,4 @@ const TodoListItem = ({ id }) => {
   )
 }
 
-export default TodoListItem;
+export default TodoListItem

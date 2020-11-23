@@ -1,11 +1,12 @@
-import { combineReducers } from 'redux';
+import { combineReducers } from 'redux'
 
-import todosReducer from './features/todos/todosSlice';
-import filtersReducer from './features/filters/filtersSlice';
+import todosReducer from './features/todos/todosSlice'
+import filtersReducer from './features/filters/filtersSlice'
 
 const rootReducer = combineReducers({
-    todos: todosReducer, // array con los todos
-    filter: filtersReducer // objecto con status y colors
+  // Define a top-level state field named `todos`, handled by `todosReducer`
+  todos: todosReducer,
+  filters: filtersReducer,
 })
 
-export default rootReducer;
+export default rootReducer
