@@ -17,7 +17,6 @@ const Footer = () => {
   })
 
   const { status, colors } = useSelector(state => state.filter);
-  //const onColorChange = (color, changeType) => dispatch(colorFilterChanged(color, changeType));
   const onColorChange = (color, changeType) => dispatch({type: "filters/colorFilterChanged", payload: { color, changeType } });
   const onStatusChange = (status) => dispatch({ type: 'filters/statusFilterChanged', payload: status });
   const onMarkAllCompletedClicked = () => dispatch({ type : 'todos/allCompleted'});

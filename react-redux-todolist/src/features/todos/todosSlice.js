@@ -1,4 +1,5 @@
 import { client } from '../../api/client'
+import { createSelector } from 'reselect';
 
 // Creamos el estado inicial de la aplicacion (para primera ejecución)
 const initialState = []
@@ -81,4 +82,9 @@ export function saveNewTodo(text) {
         dispatch(todoAdded(response.todo));
     }
 }
+
+export const selectTodoIds = createSelector(
+  state => state.todos,
+  todos => todos.map(todo => todo.id)
+)
 
