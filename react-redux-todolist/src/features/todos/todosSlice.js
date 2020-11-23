@@ -3,23 +3,11 @@ import { client } from '../../api/client'
 // Creamos el estado inicial de la aplicacion (para primera ejecución)
 const initialState = []
 
-const nextTodoId = (todos) => {
-  const maxId = todos.reduce((maxId, todo) => Math.max(todo.id, maxId), -1)
-  return maxId + 1
-}
-
 // Ahora el initial state es directamente el array de todos
 export default function todosReducer(state = initialState, action) {
   switch (action.type) {
     case 'todos/todoAdded': {
-      return [
-        ...state, // Copiamos todos los todos
-        {
-          id: nextTodoId(state),
-          text: action.payload, // Aquí tenemos el texto del todo,
-          completed: false,
-        },
-      ]
+      return [...state, action.payload]
     }
     case 'todos/todoToggled': {
       return state.map((todo) => {
@@ -69,3 +57,13 @@ export async function fetchTodos(dispatch, getState) {
   const response = await client.get('/fakeApi/todos')
   dispatch({ type: 'todos/todosLoaded', payload: response.todos })
 }
+
+// Implementamos una thunk function que nos permite crear un todo utilizando la fake api
+export function saveNewTodo(text) {
+    return async function saveNewTodoThunk (dispatch, getState){
+        const initialTodo = { text };
+        const response = await client.post("/fakeApi/todos", {todo: initialTodo});
+        dispatch({ type: 'todos/todoAdded', payload: response.todo });
+    }
+}
+
