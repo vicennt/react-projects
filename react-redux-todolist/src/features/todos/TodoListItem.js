@@ -8,7 +8,7 @@ const selectTodoById = (state, todoId) => {
 }
 
 
-const TodoListItem = ({ onColorChange, onDelete, id }) => {
+const TodoListItem = ({ id }) => {
   const todo = useSelector(state => selectTodoById(state, id));
   const { text, completed, color } = todo;
   const dispatch = useDispatch();
@@ -18,7 +18,15 @@ const TodoListItem = ({ onColorChange, onDelete, id }) => {
   }
 
   const handleColorChanged = (e) => {
-    onColorChange(e.target.value)
+    const color = e.target.value
+    dispatch({
+      type: 'todos/colorSelected',
+      payload: { todoId: todo.id, color },
+    })
+  }
+
+  const onDelete = () => {
+    dispatch({ type: 'todos/todoDeleted', payload: todo.id })
   }
 
   const colorOptions = availableColors.map((c) => (
