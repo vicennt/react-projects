@@ -1,6 +1,7 @@
 import React from 'react';
 import { availableColors, capitalize } from '../filters/colors'
 
+
 const ColorFilters = ({ value: colors, onChange }) => {
     const renderedColors = availableColors.map((color) => {
       const checked = colors.includes(color)

@@ -52,10 +52,25 @@ export default function todosReducer(state = initialState, action) {
   }
 }
 
+// Creamos action creator para poder reutilizar y encapsular las acciones
+export const todosLoaded = todos => {
+  return {
+    type: "todos/todosLoaded",
+    payload: todos
+  }
+}
+
+export const todoAdded = todo => {
+  return {
+    type: "todos/todoAdded",
+    payload: todo
+  }
+}
+
 // Implementamos una thunk function que nos permitira hacer logica async en el middleware
 export async function fetchTodos(dispatch, getState) {
   const response = await client.get('/fakeApi/todos')
-  dispatch({ type: 'todos/todosLoaded', payload: response.todos })
+  dispatch(todosLoaded(response.todos))
 }
 
 // Implementamos una thunk function que nos permite crear un todo utilizando la fake api
@@ -63,7 +78,7 @@ export function saveNewTodo(text) {
     return async function saveNewTodoThunk (dispatch, getState){
         const initialTodo = { text };
         const response = await client.post("/fakeApi/todos", {todo: initialTodo});
-        dispatch({ type: 'todos/todoAdded', payload: response.todo });
+        dispatch(todoAdded(response.todo));
     }
 }
 
