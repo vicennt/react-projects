@@ -1,11 +1,12 @@
-import { createSlice, createAsyncThunk, createSelector } from '@reduxjs/toolkit'
+import { createSlice, createAsyncThunk, createSelector, createEntityAdapter } from '@reduxjs/toolkit'
 import { client } from '../../api/client'
 import { StatusFilters } from '../filters/filtersSlice'
 
-const initialState = {
+const todosAdapter = createEntityAdapter();
+
+const initialState = todosAdapter.getInitialState({
   status: 'idle',
-  entities: {},
-}
+})
 
 /*
   createAsyncThunk nos permite crear thunks más rápido
@@ -65,20 +66,18 @@ const todosSlice = createSlice({
         }
       },
     },
-    todoDeleted(state, action) {
-      delete state.entities[action.payload]
-    },
+    todoDeleted : todosAdapter.removeOne
+    ,
     allTodosCompleted(state, action) {
       Object.values(state.entities).forEach((todo) => {
         todo.completed = true
       })
     },
     completedTodosCleared(state, action) {
-      Object.values(state.entities).forEach((todo) => {
-        if (todo.completed) {
-          delete state.entities[todo.id]
-        }
-      })
+      const completedIds = Object.values(state.entities)
+        .filter(todo => todo.completed)
+        .map(todo => todo.id)
+        todosAdapter.removeMany(state, completedIds);
     },
     todosLoading(state, action) {
       state.status = 'loading'
@@ -105,10 +104,7 @@ const todosSlice = createSlice({
         state.entities = newEntities;
         state.status = "idle";
       })
-      .addCase(saveNewTodo.fulfilled, (state, action) => {
-        const todo = action.payload;
-        state.entities[todo.id] = todo;
-      })
+      .addCase(saveNewTodo.fulfilled, todosAdapter.addOne)
   }
 })
 
@@ -125,18 +121,11 @@ export const {
 
 export default todosSlice.reducer
 
+export const {
+  selectAll: selectTodos,
+  selectById: selectTodoById
+} = todosAdapter.getSelectors(state => state.todos)
 
-
-
-const selectTodoEntities = (state) => state.todos.entities
-
-export const selectTodos = createSelector(selectTodoEntities, (entities) =>
-  Object.values(entities)
-)
-
-export const selectTodoById = (state, todoId) => {
-  return selectTodoEntities(state)[todoId]
-}
 
 export const selectTodoIds = createSelector(
   // First, pass one or more "input selector" functions:
