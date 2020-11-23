@@ -1,4 +1,4 @@
-import { createSlice, createSelector } from '@reduxjs/toolkit'
+import { createSlice, createAsyncThunk, createSelector } from '@reduxjs/toolkit'
 import { client } from '../../api/client'
 import { StatusFilters } from '../filters/filtersSlice'
 
@@ -6,6 +6,24 @@ const initialState = {
   status: 'idle',
   entities: {},
 }
+
+/*
+  createAsyncThunk nos permite crear thunks más rápido
+  argumentos:
+    - string que se utiliza como prefijo en el action type 
+    - un payload creator q es una callback funtion que devuelve una promesa.
+*/
+
+export const fetchTodos = createAsyncThunk('todos/fetchTodos', async () => {
+  const response = await client.get('/fakeApi/todos');
+  return response.todos;
+}) // Se generan 3 action creators (../pending, ../fulfilled y ../rejected) -> extraReducers
+
+export const saveNewTodo = createAsyncThunk('todos/saveNewTodo', async (text) => {
+  const initialTodo = { text };
+  const response = await client.post('/fakeApi/todos', {todo: initialTodo});
+  return response.todo;
+})
 
 /*
   createSlice() nos simplifica la creación de reducers
@@ -74,6 +92,24 @@ const todosSlice = createSlice({
       state.status = 'idle'
     },
   },
+  extraReducers: builder => {
+    builder
+      .addCase(fetchTodos.pending, (state, action) => {
+       state.status = "loading";
+      })
+      .addCase(fetchTodos.fulfilled, (state, action) => {
+        const newEntities = {};
+        action.payload.forEach(todo => {
+          newEntities[todo.id] = todo;
+        })
+        state.entities = newEntities;
+        state.status = "idle";
+      })
+      .addCase(saveNewTodo.fulfilled, (state, action) => {
+        const todo = action.payload;
+        state.entities[todo.id] = todo;
+      })
+  }
 })
 
 export const {
@@ -89,20 +125,8 @@ export const {
 
 export default todosSlice.reducer
 
-// Thunk function
-export const fetchTodos = () => async (dispatch) => {
-  dispatch(todosLoading())
-  const response = await client.get('/fakeApi/todos')
-  dispatch(todosLoaded(response.todos))
-}
 
-export function saveNewTodo(text) {
-  return async function saveNewTodoThunk(dispatch, getState) {
-    const initialTodo = { text }
-    const response = await client.post('/fakeApi/todos', { todo: initialTodo })
-    dispatch(todoAdded(response.todo))
-  }
-}
+
 
 const selectTodoEntities = (state) => state.todos.entities
 
